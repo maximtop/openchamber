@@ -1,0 +1,440 @@
+{
+ "mode": "production",
+ "hardware": "arm64 Apple M4 Max x14, 39GB RAM",
+ "frameLiveness": 241,
+ "open": {
+  "before-100": {
+   "n": 15,
+   "min": 5.3,
+   "median": 6.6,
+   "p95": 24.3,
+   "max": 24.3,
+   "mean": 8,
+   "samples": [
+    5.3,
+    5.4,
+    5.7,
+    6.1,
+    6.1,
+    6.3,
+    6.5,
+    6.6,
+    6.7,
+    6.8,
+    7,
+    7.3,
+    7.6,
+    12.3,
+    24.3
+   ]
+  },
+  "after-100": {
+   "n": 15,
+   "min": 8.2,
+   "median": 9.1,
+   "p95": 22,
+   "max": 22,
+   "mean": 9.9,
+   "samples": [
+    8.2,
+    8.3,
+    8.4,
+    8.5,
+    8.5,
+    8.7,
+    8.9,
+    9.1,
+    9.1,
+    9.3,
+    9.3,
+    9.8,
+    10,
+    10.5,
+    22
+   ]
+  },
+  "before-1000": {
+   "n": 15,
+   "min": 40.5,
+   "median": 44.4,
+   "p95": 114.9,
+   "max": 114.9,
+   "mean": 51.2,
+   "samples": [
+    40.5,
+    41.1,
+    41.3,
+    41.5,
+    42.3,
+    42.6,
+    43.8,
+    44.4,
+    46.9,
+    47.8,
+    48.2,
+    49.5,
+    49.7,
+    73.8,
+    114.9
+   ]
+  },
+  "after-1000": {
+   "n": 15,
+   "min": 63.3,
+   "median": 69,
+   "p95": 90.1,
+   "max": 90.1,
+   "mean": 71.7,
+   "samples": [
+    63.3,
+    63.3,
+    63.5,
+    64.2,
+    66.8,
+    67.8,
+    68.8,
+    69,
+    69.2,
+    73,
+    73.9,
+    75,
+    81,
+    86.4,
+    90.1
+   ]
+  }
+ },
+ "search": {
+  "after-search-100": {
+   "synth project 55": {
+    "ack": {
+     "n": 10,
+     "min": 1.5,
+     "median": 2,
+     "p95": 3.3,
+     "max": 3.3,
+     "mean": 2.1,
+     "samples": [
+      1.5,
+      1.6,
+      1.8,
+      1.8,
+      1.9,
+      2,
+      2.2,
+      2.3,
+      2.9,
+      3.3
+     ]
+    },
+    "paintProxy": {
+     "n": 10,
+     "min": 8.5,
+     "median": 14.9,
+     "p95": 17.5,
+     "max": 17.5,
+     "mean": 13.6,
+     "samples": [
+      8.5,
+      9.8,
+      10.6,
+      12.4,
+      14.2,
+      14.9,
+      15.3,
+      16.2,
+      17,
+      17.5
+     ]
+    }
+   },
+   "zzz-no-such-project": {
+    "ack": {
+     "n": 10,
+     "min": 1.7,
+     "median": 2,
+     "p95": 5.1,
+     "max": 5.1,
+     "mean": 2.6,
+     "samples": [
+      1.7,
+      1.8,
+      1.8,
+      1.9,
+      1.9,
+      2,
+      2.3,
+      3.6,
+      4,
+      5.1
+     ]
+    },
+    "paintProxy": {
+     "n": 10,
+     "min": 8.1,
+     "median": 12.5,
+     "p95": 18,
+     "max": 18,
+     "mean": 13,
+     "samples": [
+      8.1,
+      11.4,
+      11.6,
+      12.2,
+      12.5,
+      12.5,
+      13.5,
+      13.8,
+      16.3,
+      18
+     ]
+    }
+   },
+   "(clear)": {
+    "ack": {
+     "n": 10,
+     "min": 4.8,
+     "median": 5,
+     "p95": 6.7,
+     "max": 6.7,
+     "mean": 5.4,
+     "samples": [
+      4.8,
+      4.8,
+      5,
+      5,
+      5,
+      5,
+      5.3,
+      5.6,
+      6.3,
+      6.7
+     ]
+    },
+    "paintProxy": {
+     "n": 10,
+     "min": 11.6,
+     "median": 15.3,
+     "p95": 22,
+     "max": 22,
+     "mean": 15.8,
+     "samples": [
+      11.6,
+      11.9,
+      13.2,
+      13.4,
+      14.5,
+      15.3,
+      16.7,
+      19.7,
+      19.7,
+      22
+     ]
+    }
+   }
+  },
+  "after-search-1000": {
+   "synth project 999": {
+    "ack": {
+     "n": 10,
+     "min": 22.8,
+     "median": 24.2,
+     "p95": 30,
+     "max": 30,
+     "mean": 25,
+     "samples": [
+      22.8,
+      23.2,
+      23.5,
+      23.8,
+      23.9,
+      24.2,
+      25.4,
+      26.3,
+      26.7,
+      30
+     ]
+    },
+    "paintProxy": {
+     "n": 10,
+     "min": 24.1,
+     "median": 31.2,
+     "p95": 33,
+     "max": 33,
+     "mean": 29.1,
+     "samples": [
+      24.1,
+      24.8,
+      27,
+      27.2,
+      27.8,
+      31.2,
+      31.4,
+      32,
+      32.3,
+      33
+     ]
+    }
+   },
+   "zzz-no-such-project": {
+    "ack": {
+     "n": 10,
+     "min": 25.6,
+     "median": 29,
+     "p95": 35.5,
+     "max": 35.5,
+     "mean": 29.4,
+     "samples": [
+      25.6,
+      27.5,
+      27.6,
+      28.4,
+      28.6,
+      29,
+      29.4,
+      30.4,
+      32,
+      35.5
+     ]
+    },
+    "paintProxy": {
+     "n": 10,
+     "min": 28.5,
+     "median": 32.9,
+     "p95": 43.9,
+     "max": 43.9,
+     "mean": 33.6,
+     "samples": [
+      28.5,
+      29.3,
+      30,
+      30.2,
+      31.2,
+      32.9,
+      34.2,
+      36.3,
+      39.3,
+      43.9
+     ]
+    }
+   },
+   "(clear)": {
+    "ack": {
+     "n": 10,
+     "min": 43.1,
+     "median": 46.1,
+     "p95": 47.8,
+     "max": 47.8,
+     "mean": 46,
+     "samples": [
+      43.1,
+      45.3,
+      45.5,
+      45.6,
+      45.6,
+      46.1,
+      46.7,
+      46.8,
+      47.3,
+      47.8
+     ]
+    },
+    "paintProxy": {
+     "n": 10,
+     "min": 47.7,
+     "median": 49.5,
+     "p95": 62.7,
+     "max": 62.7,
+     "mean": 51.2,
+     "samples": [
+      47.7,
+      48,
+      48.5,
+      48.6,
+      49.1,
+      49.5,
+      49.9,
+      50.6,
+      57,
+      62.7
+     ]
+    }
+   }
+  }
+ },
+ "bounds": {
+  "900x500": {
+   "dialog": {
+    "x": 5,
+    "y": 207,
+    "w": 288,
+    "h": 288.453125
+   },
+   "main": {
+    "x": 0,
+    "y": 48,
+    "w": 900,
+    "h": 452
+   },
+   "trigBottom": 202.546875,
+   "vw": 900,
+   "vh": 500,
+   "insideViewport": true,
+   "insideMainHoriz": true,
+   "belowTrigger": true,
+   "lastRow": {
+    "n": 1000,
+    "visible": true
+   }
+  },
+  "700x600": {
+   "dialog": {
+    "x": 5,
+    "y": 235,
+    "w": 288,
+    "h": 360.453125
+   },
+   "main": {
+    "x": 0,
+    "y": 48,
+    "w": 700,
+    "h": 552
+   },
+   "trigBottom": 230.546875,
+   "vw": 700,
+   "vh": 600,
+   "insideViewport": true,
+   "insideMainHoriz": true,
+   "belowTrigger": true,
+   "lastRow": {
+    "n": 1000,
+    "visible": true
+   }
+  }
+ },
+ "checks": [
+  "bounds 900x500 inside viewport:pass",
+  "bounds 900x500 horizontally inside main (no sidebar overlap):pass",
+  "bounds 900x500 opens below trigger:pass",
+  "bounds 900x500 last row reachable:pass",
+  "bounds 700x600 inside viewport:pass",
+  "bounds 700x600 horizontally inside main (no sidebar overlap):pass",
+  "bounds 700x600 opens below trigger:pass",
+  "bounds 700x600 last row reachable:pass",
+  "fixture trigger mounted:pass",
+  "search visible:pass",
+  "AC-10 both dupes listed:pass",
+  "AC-10 keyboard commits proj-b by ID:pass",
+  "AC-11 removed row gone:pass",
+  "AC-11 active falls to visible row:pass",
+  "AC-11 Enter cannot commit removed ID:pass",
+  "IME composing Enter selects nothing:pass",
+  "popup still open after composing Enter:pass",
+  "IME composing Escape does not dismiss:pass",
+  "plain Escape dismisses:pass",
+  "AC-9 Chat-only lists Chat:pass",
+  "AC-9 Chat searchable:pass",
+  "AC-9 Chat selectable by keyboard:pass",
+  "no page errors:pass"
+ ]
+}
