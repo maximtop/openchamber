@@ -5,6 +5,7 @@ import { linearPanelI18n } from './linear-panel.i18n';
 import { routingI18n } from './routing.i18n';
 import { pluginPanelI18n } from './plugin-panel.i18n';
 import { surfacePanelI18n } from './surface-panel.i18n';
+import { sessionHistoryI18n } from './session-history.i18n';
 
 export const dict: Record<I18nKey, string> = {
   'sessions.aiRename.action': '使用 AI 重命名',
@@ -31,6 +32,7 @@ export const dict: Record<I18nKey, string> = {
   'chat.liveActivity.usedSubagents': '使用了 {count} 个子代理',
   'sessions.sidebar.projectAction.active': '项目操作正在运行',
   ...settingsDict,
+  ...sessionHistoryI18n['zh-CN'],
   ...linearIssuePickerI18n['zh-CN'],
   ...linearPanelI18n['zh-CN'],
   ...routingI18n['zh-CN'],

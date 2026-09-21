@@ -4,6 +4,7 @@ import { linearPanelI18n } from './linear-panel.i18n';
 import { routingI18n } from './routing.i18n';
 import { pluginPanelI18n } from './plugin-panel.i18n';
 import { surfacePanelI18n } from './surface-panel.i18n';
+import { sessionHistoryI18n } from './session-history.i18n';
 
 export const dict = {
   'sessions.aiRename.action': 'Renommer avec l’IA',
@@ -30,6 +31,7 @@ export const dict = {
   'chat.liveActivity.usedSubagents': '{count} sous-agents utilisés',
   'sessions.sidebar.projectAction.active': 'Action du projet en cours',
   ...settingsDict,
+  ...sessionHistoryI18n.fr,
   ...linearIssuePickerI18n.fr,
   ...linearPanelI18n.fr,
   ...routingI18n.fr,

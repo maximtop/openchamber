@@ -5,6 +5,7 @@ import { linearPanelI18n } from './linear-panel.i18n';
 import { routingI18n } from './routing.i18n';
 import { pluginPanelI18n } from './plugin-panel.i18n';
 import { surfacePanelI18n } from './surface-panel.i18n';
+import { sessionHistoryI18n } from './session-history.i18n';
 
 export const dict: Record<I18nKey, string> = {
   'sessions.aiRename.action': 'AIで名前を変更',
@@ -31,6 +32,7 @@ export const dict: Record<I18nKey, string> = {
   'chat.liveActivity.usedSubagents': '{count} サブエージェントを使用',
   'sessions.sidebar.projectAction.active': 'プロジェクトアクション実行中',
   ...settingsDict,
+  ...sessionHistoryI18n.ja,
   ...linearIssuePickerI18n.ja,
   ...linearPanelI18n.ja,
   ...routingI18n.ja,

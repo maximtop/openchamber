@@ -47,6 +47,7 @@ import type { UsageWindow } from '@/types';
 import type { SessionContextUsage } from '@/stores/types/sessionTypes';
 import { useUIStore, type TimeFormatPreference } from '@/stores/useUIStore';
 import { useSessionListSync } from '@/components/session/sidebar/list/useSessionListSync';
+import { SessionHistoryControls } from '@/components/layout/SessionHistoryControls';
 
 const SettingsView = lazyWithChunkRecovery(() => import('@/components/views/SettingsView').then(m => ({ default: m.SettingsView })));
 
@@ -605,6 +606,7 @@ export const VSCodeLayout: React.FC = () => {
               showContextUsage
               showRateLimits
               enableSessionSwitcher
+              showSessionHistory
             />
             <div className="flex-1 overflow-hidden">
               <ErrorBoundary>
@@ -643,6 +645,7 @@ export const VSCodeLayout: React.FC = () => {
               showContextUsage
               showRateLimits
               enableSessionSwitcher
+              showSessionHistory
             />
             <div className="flex-1 overflow-hidden">
               <ErrorBoundary>
@@ -670,10 +673,11 @@ interface VSCodeHeaderProps {
   showContextUsage?: boolean;
   showRateLimits?: boolean;
   enableSessionSwitcher?: boolean;
+  showSessionHistory?: boolean;
 }
 
 
-const VSCodeHeader: React.FC<VSCodeHeaderProps> = ({ title, showBack, onBack, onArchiveAll, onNewSession, onSettings, onAgentManager, showMcp, showContextUsage, showRateLimits, enableSessionSwitcher }) => {
+const VSCodeHeader: React.FC<VSCodeHeaderProps> = ({ title, showBack, onBack, onArchiveAll, onNewSession, onSettings, onAgentManager, showMcp, showContextUsage, showRateLimits, enableSessionSwitcher, showSessionHistory }) => {
   const { t } = useI18n();
   const showArchivedSessions = useSessionDisplayStore((state) => state.showArchivedSessions);
   const toggleArchivedSessions = useSessionDisplayStore((state) => state.toggleArchivedSessions);
@@ -769,6 +773,7 @@ const VSCodeHeader: React.FC<VSCodeHeaderProps> = ({ title, showBack, onBack, on
           <Icon name="arrow-left" className="h-5 w-5" />
         </button>
       )}
+      {showSessionHistory ? <SessionHistoryControls /> : null}
       {enableSessionSwitcher ? (
         <SessionSwitcherDropdown variant="compact" scopeProjectId={activeProjectId}>
           <button

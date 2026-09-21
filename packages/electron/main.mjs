@@ -4660,8 +4660,8 @@ const buildAutoHiddenMenu = () => {
     {
       label: 'Go',
       submenu: [
-        { label: 'Back', accelerator: 'Ctrl+[', click: () => dispatchAction('go-back') },
-        { label: 'Forward', accelerator: 'Ctrl+]', click: () => dispatchAction('go-forward') },
+        { label: 'Back', click: () => dispatchAction('go-back') },
+        { label: 'Forward', click: () => dispatchAction('go-forward') },
         { type: 'separator' },
         { label: 'Previous Session', accelerator: 'Alt+Up', click: () => dispatchAction('previous-session') },
         { label: 'Next Session', accelerator: 'Alt+Down', click: () => dispatchAction('next-session') },

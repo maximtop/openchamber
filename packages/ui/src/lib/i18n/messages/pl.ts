@@ -5,6 +5,7 @@ import { linearPanelI18n } from './linear-panel.i18n';
 import { routingI18n } from './routing.i18n';
 import { pluginPanelI18n } from './plugin-panel.i18n';
 import { surfacePanelI18n } from './surface-panel.i18n';
+import { sessionHistoryI18n } from './session-history.i18n';
 
 export const dict: Record<I18nKey, string> = {
   'sessions.aiRename.action': 'Zmień nazwę z AI',
@@ -31,6 +32,7 @@ export const dict: Record<I18nKey, string> = {
   'chat.liveActivity.usedSubagents': 'Użyci subagenci: {count}',
   'sessions.sidebar.projectAction.active': 'Trwa wykonywanie akcji projektu',
   ...settingsDict,
+  ...sessionHistoryI18n.pl,
   ...linearIssuePickerI18n.pl,
   ...linearPanelI18n.pl,
   ...routingI18n.pl,
