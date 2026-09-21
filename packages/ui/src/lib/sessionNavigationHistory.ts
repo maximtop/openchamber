@@ -5,6 +5,7 @@ import { useGlobalSessionsStore, resolveGlobalSessionDirectory } from '@/stores/
 import { useProjectsStore } from '@/stores/useProjectsStore';
 import { opencodeClient } from '@/lib/opencode/client';
 import { isVSCodeRuntime } from '@/lib/desktop';
+import { resolveProjectForSessionDirectory } from '@/lib/projectResolution';
 import { getRuntimeKey, isTransientRuntimeKey, subscribeRuntimeEndpointWillChange, UNINITIALIZED_RUNTIME_KEY } from '@/lib/runtime-switch';
 import { createSessionNavigationHistory, type SessionVisit } from './sessionNavigationHistoryState';
 
@@ -13,7 +14,6 @@ const resolvedRevisions = new WeakMap<Session, number>();
 const notFound = z.object({
   name: z.literal('NotFoundError'), data: z.object({ message: z.string() }),
 });
-const normalizeWorkspace = (path: string) => path.trim().replace(/\\/g, '/').replace(/\/+$/, '').toLowerCase();
 const eligible = (session: Session): boolean => {
   if (session.time.archived) return false;
   if (!isVSCodeRuntime()) return true;
@@ -22,8 +22,10 @@ const eligible = (session: Session): boolean => {
     ? projects.find((project) => project.id === activeProjectId)
     : projects[0];
   const directory = resolveGlobalSessionDirectory(session);
-  return Boolean(workspace && directory
-    && normalizeWorkspace(workspace.path) === normalizeWorkspace(directory));
+  const owner = resolveProjectForSessionDirectory(
+    projects, useSessionUIStore.getState().availableWorktreesByProject, directory,
+  );
+  return Boolean(workspace && owner?.id === workspace.id);
 };
 
 export async function resolveSessionHistoryDestination(
@@ -120,6 +122,9 @@ export function startSessionHistoryTracking(): () => void {
     const stopSelection = useSessionUIStore.subscribe((state, previous) => {
       if (state.currentSessionId !== previous.currentSessionId
         || state.newSessionDraft?.open !== previous.newSessionDraft?.open) recordSelection();
+      if (state.availableWorktreesByProject !== previous.availableWorktreesByProject) {
+        sessionHistory.refreshAvailability();
+      }
     });
     const stopEndpoint = subscribeRuntimeEndpointWillChange(pauseSessionHistory);
     const stopMetadata = useGlobalSessionsStore.subscribe((state, previous) => {
@@ -143,6 +148,7 @@ export function startSessionHistoryTracking(): () => void {
   };
 }
 
+// Reports whether navigation was started; destination lookup settles asynchronously.
 export const navigateSessionHistory = (delta: -1 | 1): boolean => {
   const state = sessionHistory.getSnapshot();
   if (!(delta === -1 ? state.canGoBack : state.canGoForward)) return false;

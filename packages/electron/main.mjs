@@ -1997,6 +1997,11 @@ const dispatchMenuAction = (action) => {
     dispatchDomEventToWindow(target, 'openchamber:zoom', action);
     return;
   }
+  // History listens to both bridge and DOM events; one click must move once.
+  if (action === 'go-back' || action === 'go-forward') {
+    dispatchDomEventToWindow(target, 'openchamber:menu-action', action);
+    return;
+  }
   emitToWindow(target, 'openchamber:menu-action', action);
   dispatchDomEventToWindow(target, 'openchamber:menu-action', action);
 };

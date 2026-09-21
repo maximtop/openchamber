@@ -172,9 +172,53 @@ test('desktop vscode bootstrap navigates and reconsiders visits when the workspa
     expect(navigateSessionHistory(-1)).toBe(true);
     await Promise.resolve();
     expect(useSessionUIStore.getState().currentSessionId).toBe('A');
+    expect(await sessionHistory.navigate(1)).toBe(true);
+    expect(useSessionUIStore.getState().currentSessionId).toBe('C');
   } finally {
     stop();
     sessionHistory.setScope('adapter-vscode-cleanup');
+    useSessionUIStore.setState(ui, true);
+    useGlobalSessionsStore.setState(global, true);
+    useProjectsStore.setState(projects, true);
+    if (previousWindow) Object.defineProperty(globalThis, 'window', previousWindow);
+    else Reflect.deleteProperty(globalThis, 'window');
+  }
+});
+
+test('VS Code history follows worktree ownership and recovers after discovery', async () => {
+  const projects = useProjectsStore.getState();
+  const ui = useSessionUIStore.getState();
+  const global = useGlobalSessionsStore.getState();
+  const previousWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
+  const browser = new Window({ url: 'vscode-webview://history-test/index.html' });
+  Object.defineProperty(browser, '__VSCODE_CONFIG__', { value: { workspaceFolder: '/ws' } });
+  Object.defineProperty(globalThis, 'window', { value: browser, configurable: true, writable: true });
+  let stop = () => {};
+  try {
+    useProjectsStore.setState({ projects: [{ id: 'p1', path: '/ws' }, { id: 'p2', path: '/other' }], activeProjectId: 'p1' });
+    const worktree = { ...value('W'), directory: '/external/worktree' };
+    useGlobalSessionsStore.setState({ entityById: new Map([
+      ['A', { ...value('A'), directory: '/ws' }], ['W', worktree],
+      ['other', { ...value('other'), directory: '/other/subdir' }],
+      ['lookalike', { ...value('lookalike'), directory: '/ws-other' }],
+    ]) });
+    useSessionUIStore.setState({ currentSessionId: 'W', availableWorktreesByProject: new Map(), newSessionDraft: { ...ui.newSessionDraft, open: false } });
+    stop = startSessionHistoryTracking();
+    useSessionUIStore.setState({ currentSessionId: 'A' });
+    expect(await sessionHistory.navigate(-1)).toBe(false);
+    expect(sessionHistory.getSnapshot().canGoBack).toBe(false);
+    useSessionUIStore.setState({ availableWorktreesByProject: new Map([
+      ['/ws', [{ path: worktree.directory, projectDirectory: '/ws', branch: 'feature', label: 'feature' }]],
+    ]) });
+    expect(sessionHistory.getSnapshot().canGoBack).toBe(true);
+    const signal = new AbortController().signal;
+    expect(await resolveSessionHistoryDestination({ sessionId: 'W', directory: worktree.directory }, signal)).toBe(worktree);
+    for (const sessionId of ['other', 'lookalike']) {
+      expect(await resolveSessionHistoryDestination({ sessionId, directory: null }, signal)).toBeNull();
+    }
+  } finally {
+    stop();
+    sessionHistory.setScope('worktree-ownership-cleanup');
     useSessionUIStore.setState(ui, true);
     useGlobalSessionsStore.setState(global, true);
     useProjectsStore.setState(projects, true);

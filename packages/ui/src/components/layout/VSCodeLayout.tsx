@@ -548,6 +548,7 @@ export const VSCodeLayout: React.FC = () => {
         <div className="flex flex-col h-full">
           <VSCodeHeader
             title={activeSessionTitle || t('vscodeLayout.title.chat')}
+            showSessionHistory
             showMcp
             showContextUsage
             showRateLimits

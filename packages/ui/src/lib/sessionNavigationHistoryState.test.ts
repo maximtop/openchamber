@@ -46,6 +46,28 @@ test('retains exactly the last 100 visits and never wraps', async () => {
   expect(history.getSnapshot().canGoBack).toBe(false);
 });
 
+test('revisiting a session retains its resolved worktree directory for later lookups', async () => {
+  const destination = { ...session('A', ''), project: { worktree: '/worktree' } };
+  const directories: Array<string | null> = [];
+  const history = createSessionNavigationHistory({
+    resolve: async (entry) => {
+      if (entry.sessionId === 'A') directories.push(entry.directory);
+      return entry.sessionId === 'A' ? destination : session('B');
+    },
+    select: () => {},
+  });
+  history.setScope('server-a');
+  history.record({ sessionId: 'A', directory: '/worktree' });
+  history.record(visit('B'));
+  await history.navigate(-1);
+  await history.navigate(1);
+  destination.project.worktree = '/moved-worktree';
+  await history.navigate(-1);
+  await history.navigate(1);
+  await history.navigate(-1);
+  expect(directories).toEqual(['/worktree', '/worktree', '/moved-worktree']);
+});
+
 test('skips confirmed missing destinations but retries uncertain failures', async () => {
   let offline = true;
   const { history, selected } = fixture(async (id) => {

@@ -1,4 +1,5 @@
 import type { Session } from '@opencode-ai/sdk/v2';
+import { resolveGlobalSessionDirectory } from '@/stores/globalSessionStructure';
 
 export type SessionVisit = { sessionId: string; directory: string | null };
 type Dependencies = {
@@ -123,7 +124,7 @@ export function createSessionNavigationHistory(dependencies: Dependencies) {
           finally { selecting = false; }
           if (accepted) {
             cursor = target;
-            visits[target] = { sessionId: destination.id, directory: destination.directory };
+            visits[target] = { sessionId: destination.id, directory: resolveGlobalSessionDirectory(destination) };
             return true;
           }
         }
