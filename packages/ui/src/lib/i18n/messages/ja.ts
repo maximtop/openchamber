@@ -6,6 +6,7 @@ import { routingI18n } from './routing.i18n';
 import { pluginPanelI18n } from './plugin-panel.i18n';
 import { surfacePanelI18n } from './surface-panel.i18n';
 import { sessionHistoryI18n } from './session-history.i18n';
+import { fileArtifactsI18n } from './file-artifacts.i18n';
 
 export const dict: Record<I18nKey, string> = {
   'sessions.aiRename.action': 'AIで名前を変更',
@@ -38,6 +39,7 @@ export const dict: Record<I18nKey, string> = {
   ...routingI18n.ja,
   ...pluginPanelI18n.ja,
   ...surfacePanelI18n.ja,
+  ...fileArtifactsI18n.ja,
   'terminalView.actions.attachSelection': '選択した出力を添付',
   'terminalView.actions.copySelection': '選択した出力をコピー',
   'terminalView.toast.selectionCopied': '出力をコピーしました',
@@ -157,6 +159,7 @@ export const dict: Record<I18nKey, string> = {
   'mobile.header.openWorkspaceWithChangesAria': 'ワークスペースパネルを開く、未コミットの変更あり',
   'mobile.header.openMetadataAria': 'セッションメタデータを開く',
   'mobile.header.metadata.context': 'コンテキスト',
+  'mobile.header.metadata.contextPending': 'コンテキストの使用量はセッション開始後に表示されます。',
   'mobile.header.metadata.usage': '使用量',
   'mobile.menu.titleAria': 'ワークスペースツール',
   'mobile.menu.files': 'ファイル',

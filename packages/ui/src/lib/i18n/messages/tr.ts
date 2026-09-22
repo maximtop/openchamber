@@ -5,6 +5,7 @@ import { routingI18n } from './routing.i18n';
 import { pluginPanelI18n } from './plugin-panel.i18n';
 import { surfacePanelI18n } from './surface-panel.i18n';
 import { sessionHistoryI18n } from './session-history.i18n';
+import { fileArtifactsI18n } from './file-artifacts.i18n';
 
 export const dict = {
   'sessions.aiRename.action': 'Yapay zekâ ile yeniden adlandır',
@@ -37,6 +38,7 @@ export const dict = {
   ...routingI18n.tr,
   ...pluginPanelI18n.tr,
   ...surfacePanelI18n.tr,
+  ...fileArtifactsI18n.tr,
   'terminalView.actions.attachSelection': 'Seçili çıktıyı ekle',
   'terminalView.actions.copySelection': 'Seçili çıktıyı kopyala',
   'terminalView.toast.selectionCopied': 'Çıktı kopyalandı',
@@ -142,6 +144,7 @@ export const dict = {
   'mobile.header.openWorkspaceWithChangesAria': 'Çalışma alanı panelini aç, kaydedilmemiş değişiklikler var',
   'mobile.header.openMetadataAria': 'Session meta verisini aç',
   'mobile.header.metadata.context': 'Bağlam',
+  'mobile.header.metadata.contextPending': 'Bağlam kullanımı oturum başladığında görünür.',
   'mobile.header.metadata.usage': 'Kullanım',
   'mobile.menu.titleAria': 'Çalışma alanı araçları',
   'mobile.menu.files': 'Dosyalar',

@@ -5,6 +5,7 @@ import { routingI18n } from './routing.i18n';
 import { pluginPanelI18n } from './plugin-panel.i18n';
 import { surfacePanelI18n } from './surface-panel.i18n';
 import { sessionHistoryI18n } from './session-history.i18n';
+import { fileArtifactsI18n } from './file-artifacts.i18n';
 
 export const dict = {
   'sessions.aiRename.action': 'Rename with AI',
@@ -37,6 +38,7 @@ export const dict = {
   ...routingI18n.en,
   ...pluginPanelI18n.en,
   ...surfacePanelI18n.en,
+  ...fileArtifactsI18n.en,
   'terminalView.actions.attachSelection': 'Attach selected output',
   'terminalView.actions.copySelection': 'Copy selected output',
   'terminalView.toast.selectionCopied': 'Output copied',
@@ -155,6 +157,7 @@ export const dict = {
   'mobile.header.openWorkspaceWithChangesAria': 'Open workspace panel, uncommitted changes',
   'mobile.header.openMetadataAria': 'Open session metadata',
   'mobile.header.metadata.context': 'Context',
+  'mobile.header.metadata.contextPending': 'Context usage appears once the session starts.',
   'mobile.header.metadata.usage': 'Usage',
   'mobile.menu.titleAria': 'Workspace tools',
   'mobile.menu.files': 'Files',

@@ -6,6 +6,7 @@ import { routingI18n } from './routing.i18n';
 import { pluginPanelI18n } from './plugin-panel.i18n';
 import { surfacePanelI18n } from './surface-panel.i18n';
 import { sessionHistoryI18n } from './session-history.i18n';
+import { fileArtifactsI18n } from './file-artifacts.i18n';
 
 export const dict: Record<I18nKey, string> = {
   'sessions.aiRename.action': 'Renombrar con IA',
@@ -38,6 +39,7 @@ export const dict: Record<I18nKey, string> = {
   ...routingI18n.es,
   ...pluginPanelI18n.es,
   ...surfacePanelI18n.es,
+  ...fileArtifactsI18n.es,
   'terminalView.actions.attachSelection': 'Adjuntar salida seleccionada',
   'terminalView.actions.copySelection': 'Copiar salida seleccionada',
   'terminalView.toast.selectionCopied': 'Salida copiada',
@@ -156,6 +158,7 @@ export const dict: Record<I18nKey, string> = {
   "mobile.header.openWorkspaceWithChangesAria": "Abrir panel de trabajo, cambios sin confirmar",
   "mobile.header.openMetadataAria": "Abrir metadatos de la sesión",
   "mobile.header.metadata.context": "Contexto",
+  "mobile.header.metadata.contextPending": "El uso del contexto aparecerá cuando comience la sesión.",
   "mobile.header.metadata.usage": "Uso",
   "mobile.menu.titleAria": "Herramientas del espacio de trabajo",
   "mobile.menu.files": "Archivos",

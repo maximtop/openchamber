@@ -5,6 +5,7 @@ import { routingI18n } from './routing.i18n';
 import { pluginPanelI18n } from './plugin-panel.i18n';
 import { surfacePanelI18n } from './surface-panel.i18n';
 import { sessionHistoryI18n } from './session-history.i18n';
+import { fileArtifactsI18n } from './file-artifacts.i18n';
 
 export const dict = {
   'sessions.aiRename.action': 'Mit KI umbenennen',
@@ -37,6 +38,7 @@ export const dict = {
   ...routingI18n.de,
   ...pluginPanelI18n.de,
   ...surfacePanelI18n.de,
+  ...fileArtifactsI18n.de,
   'common.language.german': 'Deutsch',
   'common.loading': 'Wird geladen...',
   'common.unavailable': 'Nicht verfügbar',
@@ -122,6 +124,7 @@ export const dict = {
   'mobile.surface.closeAria': 'Schließen',
   'mobile.header.openMetadataAria': 'Sitzungs-Metadaten öffnen',
   'mobile.header.metadata.context': 'Kontext',
+  'mobile.header.metadata.contextPending': 'Die Kontextnutzung erscheint, sobald die Sitzung beginnt.',
   'mobile.header.metadata.usage': 'Nutzung',
   'mobile.menu.titleAria': 'Arbeitsbereichstools',
   'mobile.menu.files': 'Dateien',
