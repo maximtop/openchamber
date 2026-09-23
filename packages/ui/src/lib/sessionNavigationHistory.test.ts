@@ -1,10 +1,12 @@
 import { expect, test } from 'bun:test';
 import { Window } from 'happy-dom';
-import type { Session } from '@opencode-ai/sdk/v2';
+import type { Session } from '@/lib/opencode/model';
+import type { SessionInfo } from '@opencode/client';
 import { useSessionUIStore } from '@/sync/session-ui-store';
 import { useGlobalSessionsStore } from '@/stores/useGlobalSessionsStore';
 import { useProjectsStore } from '@/stores/useProjectsStore';
-import { createRuntimeOpencodeClient } from '@/lib/opencode/client';
+import { opencodeClient } from '@/lib/opencode/client';
+import { configureRuntimeUrlResolver, getRuntimeUrlResolver, setRuntimeUrlResolver } from '@/lib/runtime-url';
 import { getRuntimeKey, MOBILE_DISCONNECTED_RUNTIME_KEY, switchRuntimeEndpoint, UNINITIALIZED_RUNTIME_KEY } from '@/lib/runtime-switch';
 import {
   sessionHistory, startSessionHistoryTracking, resolveSessionHistoryDestination,
@@ -14,14 +16,15 @@ import {
 // SAFETY: the UI type-check does not include bun's global types; this declares
 // only the local HTTP fixture this test uses.
 declare const Bun: {
-  serve: (options: { port: number; fetch: () => Response }) => {
+  serve: (options: { port: number; fetch: (request: Request) => Response }) => {
     url: URL;
     stop: (force?: boolean) => void;
   };
 };
 
 const value = (id: string): Session => ({
-  id, slug: id, projectID: 'p', directory: '/project', title: id, version: '1',
+  id, projectID: 'p', directory: '/project', title: id,
+  cost: 0, tokens: { input: 0, output: 0, reasoning: 0, cache: { read: 0, write: 0 } },
   time: { created: 1, updated: 1 },
 });
 
@@ -55,44 +58,57 @@ test('seeds an existing selection and records normal store selection changes', (
 
 test('lookup distinguishes unloaded, archived, authoritative missing and uncertain failure', async () => {
   let status = 200;
-  let body: Session | { name: string; data: { message: string } } = value('unloaded');
+  const { directory, ...session } = value('unloaded');
+  const info: SessionInfo = { ...session, location: { directory } };
+  let body: SessionInfo | { _tag: string; message: string } = info;
   let beforeResponse = () => {};
-  const server = Bun.serve({ port: 0, fetch: () => {
+  let requestedDirectory: string | null = null;
+  const server = Bun.serve({ port: 0, fetch: (request) => {
+    requestedDirectory = request.headers.get('x-opencode-directory');
     beforeResponse();
-    return Response.json(body, { status });
+    return Response.json(status === 200 ? { data: body } : body, { status });
   } });
-  const client = createRuntimeOpencodeClient({ baseUrl: server.url.toString() });
+  const previousResolver = getRuntimeUrlResolver();
+  configureRuntimeUrlResolver({ apiBaseUrl: server.url.toString() });
+  opencodeClient.reconnectToRuntimeBaseUrl();
   const signal = new AbortController().signal;
   const entry = { sessionId: 'unloaded', directory: '/project' };
   const global = useGlobalSessionsStore.getState();
   try {
     useGlobalSessionsStore.setState({ entityById: new Map() });
-    expect((await resolveSessionHistoryDestination(entry, signal, client))?.id).toBe('unloaded');
-    body = { ...value('unloaded'), time: { created: 1, updated: 1, archived: 2 } };
-    expect(await resolveSessionHistoryDestination(entry, signal, client)).toBeNull();
+    expect(await resolveSessionHistoryDestination(entry, signal)).toEqual(value('unloaded'));
+    expect(requestedDirectory).toBe(encodeURIComponent(entry.directory));
+    const canceled = new AbortController();
+    beforeResponse = () => canceled.abort();
+    await expect(resolveSessionHistoryDestination(entry, canceled.signal)).rejects.toThrow();
+    beforeResponse = () => {};
+    body = { ...info, time: { created: 1, updated: 1, archived: 2 } };
+    expect(await resolveSessionHistoryDestination(entry, signal)).toBeNull();
     status = 404;
-    body = { name: 'NotFoundError', data: { message: 'Session not found' } };
-    expect(await resolveSessionHistoryDestination(entry, signal, client)).toBeNull();
-    await expect(resolveSessionHistoryDestination({ ...entry, directory: null }, signal, client)).rejects.toThrow();
+    body = { _tag: 'SessionNotFoundError', message: 'Session not found' };
+    expect(await resolveSessionHistoryDestination(entry, signal)).toBeNull();
+    await expect(resolveSessionHistoryDestination({ ...entry, directory: null }, signal)).rejects.toThrow();
     status = 503;
-    await expect(resolveSessionHistoryDestination(entry, signal, client)).rejects.toThrow();
+    await expect(resolveSessionHistoryDestination(entry, signal)).rejects.toThrow();
     status = 403;
-    await expect(resolveSessionHistoryDestination(entry, signal, client)).rejects.toThrow();
+    await expect(resolveSessionHistoryDestination(entry, signal)).rejects.toThrow();
     status = 404;
-    body = { name: 'ProxyError', data: { message: 'upstream unavailable' } };
-    await expect(resolveSessionHistoryDestination(entry, signal, client)).rejects.toThrow();
+    body = { _tag: 'ProxyError', message: 'upstream unavailable' };
+    await expect(resolveSessionHistoryDestination(entry, signal)).rejects.toThrow();
     status = 200;
-    body = value('unloaded');
+    body = info;
     beforeResponse = () => { useGlobalSessionsStore.getState().removeSessions(['unloaded']); };
-    expect(await resolveSessionHistoryDestination(entry, signal, client)).toBeNull();
+    expect(await resolveSessionHistoryDestination(entry, signal)).toBeNull();
     beforeResponse = () => {
       useGlobalSessionsStore.getState().upsertSession({
         ...value('unloaded'), time: { created: 1, updated: 3, archived: 3 },
       });
     };
-    expect(await resolveSessionHistoryDestination(entry, signal, client)).toBeNull();
+    expect(await resolveSessionHistoryDestination(entry, signal)).toBeNull();
   } finally {
     server.stop(true);
+    setRuntimeUrlResolver(previousResolver);
+    opencodeClient.reconnectToRuntimeBaseUrl();
     useGlobalSessionsStore.setState(global, true);
   }
 });
@@ -138,8 +154,7 @@ test('desktop vscode bootstrap navigates and reconsiders visits when the workspa
   Object.defineProperty(browser, '__VSCODE_CONFIG__', { value: { workspaceFolder: '/ws', workspaceFolders: [{ name: 'ws', path: '/ws' }], theme: 'dark', connectionStatus: 'connected' } });
   Object.defineProperty(globalThis, 'window', { value: browser, configurable: true, writable: true });
   const inWorkspace = (id: string, directory: string): Session => ({
-    id, slug: id, projectID: 'p', directory, title: id, version: '1',
-    time: { created: 1, updated: 1 },
+    ...value(id), directory,
   });
   let stop = () => {};
   try {

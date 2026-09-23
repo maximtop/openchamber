@@ -8,9 +8,39 @@ merged, and a typical merged PR is around 200 lines.
 New features, changes to how something behaves for users, or reworks of how a
 module is put together: start an
 [Ideas discussion](https://github.com/openchamber/openchamber/discussions/categories/ideas)
-first and describe what changes for the user. Product decisions happen there,
-before anyone writes code, so you don't spend a week on something we can't take.
-Once it's agreed, build it and link the discussion from the PR.
+first, and start it before the code. Say what you were trying to do, what got
+in your way, and what you'd want instead, in your own words. A screenshot or a
+rough mockup helps more than a specification.
+
+A post describing something you already built is a report, not a discussion:
+the decision is made by then, and it gets closed along with the PR behind it.
+Not because it was drafted by an AI, we all use AI, but because it arrives
+after the only moment when talking would have changed anything. If you have an
+idea of how you'd implement it, or a branch already sketched out, bring it as a
+question: here's how I'd do it, does that shape work? A branch you're willing
+to change is a proposal. Once the shape is agreed, build it and link the
+discussion from the PR.
+
+Wait for the answer before you build. A pull request that carries a product
+decision, with no discussion behind it and no maintainer go-ahead, is not
+getting reviewed, whatever shape the code is in. That "yes, go ahead" is the
+thing that makes it worth your evening.
+
+**What counts as a product decision?** Anything where two reasonable people
+could disagree about whether it should exist or how it should behave. In
+practice: a new button, panel, setting or command; a changed default; a
+shortcut or gesture that now does something else; different wording, ordering
+or grouping in the UI; anything that turns existing behavior on or off for
+everyone. Also removing or working around behavior the code marks as
+deliberate: if a comment says something is skipped on purpose, then "is that
+actually a bug?" is a product question, and it comes first.
+
+Not a product decision: a crash, wrong data, something that doesn't work the
+way it plainly says it does, a performance fix that keeps behavior identical.
+Those are bugs. Just open the PR.
+
+Not sure? Ask in the discussion first. It costs you one paragraph and saves
+you the whole pull request.
 
 A large PR with no discussion behind it gets a `needs-discussion` label and a
 comment asking for one. It stays parked until the discussion exists. Nobody is
@@ -166,12 +196,18 @@ without reconstructing the contributor's work.
 
 Before opening a pull request:
 
-1. Read [`AGENTS.md`](./AGENTS.md), every project skill matching the character
+1. For anything that is not a bug fix or a small improvement, make sure the
+   [Ideas discussion](https://github.com/openchamber/openchamber/discussions/categories/ideas)
+   happened first, that a maintainer said go ahead, and link it. Opening one
+   after the implementation, to describe what you already built, closes the
+   post and this pull request with it; opening the pull request without the
+   go-ahead means nobody reviews it.
+2. Read [`AGENTS.md`](./AGENTS.md), every project skill matching the character
    of the change, and the nearest package README and module `DOCUMENTATION.md`.
-2. Keep the change focused. Separate unrelated cleanup or refactors.
-3. Run the validation required by the applicable project guidance, not only
+3. Keep the change focused. Separate unrelated cleanup or refactors.
+4. Run the validation required by the applicable project guidance, not only
    the broad commands above.
-4. Complete the pull request template with concrete, current evidence.
+5. Complete the pull request template with concrete, current evidence.
 
 ### Pull Request Contract
 

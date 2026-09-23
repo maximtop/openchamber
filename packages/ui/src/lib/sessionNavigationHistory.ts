@@ -1,9 +1,8 @@
-import type { OpencodeClient, Session } from '@opencode-ai/sdk/v2';
-import { z } from 'zod';
+import type { Session } from '@/lib/opencode/model';
 import { useSessionUIStore } from '@/sync/session-ui-store';
 import { useGlobalSessionsStore, resolveGlobalSessionDirectory } from '@/stores/useGlobalSessionsStore';
 import { useProjectsStore } from '@/stores/useProjectsStore';
-import { opencodeClient } from '@/lib/opencode/client';
+import { opencodeClient, OpencodeApiError } from '@/lib/opencode/client';
 import { isVSCodeRuntime } from '@/lib/desktop';
 import { resolveProjectForSessionDirectory } from '@/lib/projectResolution';
 import { getRuntimeKey, isTransientRuntimeKey, subscribeRuntimeEndpointWillChange, UNINITIALIZED_RUNTIME_KEY } from '@/lib/runtime-switch';
@@ -11,9 +10,6 @@ import { createSessionNavigationHistory, type SessionVisit } from './sessionNavi
 
 // Metadata receipts prevent a resolved lookup from overwriting a newer store mutation.
 const resolvedRevisions = new WeakMap<Session, number>();
-const notFound = z.object({
-  name: z.literal('NotFoundError'), data: z.object({ message: z.string() }),
-});
 const eligible = (session: Session): boolean => {
   if (session.time.archived) return false;
   if (!isVSCodeRuntime()) return true;
@@ -31,7 +27,6 @@ const eligible = (session: Session): boolean => {
 export async function resolveSessionHistoryDestination(
   visit: SessionVisit,
   signal: AbortSignal,
-  client: OpencodeClient = opencodeClient.getSdkClient(),
 ): Promise<Session | null> {
   const before = useGlobalSessionsStore.getState();
   const known = before.entityById.get(visit.sessionId);
@@ -40,21 +35,24 @@ export async function resolveSessionHistoryDestination(
     return eligible(known) ? known : null;
   }
   const revision = before.mutationRevisionBySessionId.get(visit.sessionId) ?? 0;
-  const result = await client.session.get({
-    sessionID: visit.sessionId, directory: visit.directory ?? undefined,
-  }, { signal });
+  let fetched: Session | null = null;
+  try {
+    fetched = await opencodeClient.getSession(visit.sessionId, visit.directory, signal);
+  } catch (error) {
+    if (!(visit.directory && error instanceof OpencodeApiError
+      && error.status === 404 && error.tag === 'SessionNotFoundError')) throw error;
+  }
   if (signal.aborted) throw new Error('Session destination lookup canceled');
   const after = useGlobalSessionsStore.getState();
   const latestRevision = after.mutationRevisionBySessionId.get(visit.sessionId) ?? 0;
   const current = after.entityById.get(visit.sessionId);
   if (latestRevision !== revision && !current) return null;
-  const destination = current ?? result.data;
+  const destination = current ?? fetched;
   if (destination) {
     resolvedRevisions.set(destination, latestRevision);
     return eligible(destination) ? destination : null;
   }
-  if (visit.directory && result.response?.status === 404 && notFound.safeParse(result.error).success) return null;
-  throw new Error('Session destination lookup failed');
+  return null;
 }
 
 export const sessionHistory = createSessionNavigationHistory({

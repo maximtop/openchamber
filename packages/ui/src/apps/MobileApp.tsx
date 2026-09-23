@@ -1,3 +1,4 @@
+import { OpenCodeCompatibilityGate } from '@/components/update/OpenCodeCompatibilityGate';
 import React from 'react';
 
 import { AboutSettings } from '@/components/sections/openchamber/AboutSettings';
@@ -397,8 +398,14 @@ const MobileShell: React.FC<{ onActiveConnectionDeleted: () => void }> = ({ onAc
       oauthClientSecret: '',
       oauthScope: '',
       oauthRedirectUri: '',
-      timeout: '',
-      enabled: true,
+      oauthCallbackPort: '',
+      oauthAuthServerMetadataUrl: '',
+      protocol: 'legacy',
+      timeoutStartup: '',
+      timeoutCatalog: '',
+      timeoutExecution: '',
+      codemode: true,
+      disabled: false,
     };
 
     setMcpDraft(draft);
@@ -641,7 +648,7 @@ const MobileShell: React.FC<{ onActiveConnectionDeleted: () => void }> = ({ onAc
   );
 };
 
-export function MobileApp({ apis }: MobileAppProps) {
+function MobileAppContent({ apis }: MobileAppProps) {
   const { t } = useI18n();
   const initializeApp = useConfigStore((state) => state.initializeApp);
   const isInitialized = useConfigStore((state) => state.isInitialized);
@@ -1330,4 +1337,15 @@ export function MobileApp({ apis }: MobileAppProps) {
       </SyncProvider>
     </ErrorBoundary>
   );
+}
+
+export function MobileApp(props: MobileAppProps) {
+  const endpoint = React.useSyncExternalStore(
+    (notify) => subscribeRuntimeEndpointChanged(() => notify()),
+    getRuntimeApiBaseUrl,
+    getRuntimeApiBaseUrl,
+  );
+  // Native connection selection must mount before there is a server to probe.
+  if (isCapacitorMobileApp() && !endpoint) return <MobileAppContent {...props} />;
+  return <OpenCodeCompatibilityGate><MobileAppContent {...props} /></OpenCodeCompatibilityGate>;
 }

@@ -1,4 +1,4 @@
-import type { Session } from '@opencode-ai/sdk/v2';
+import type { Session } from '@/lib/opencode/model';
 import { resolveGlobalSessionDirectory } from '@/stores/globalSessionStructure';
 
 export type SessionVisit = { sessionId: string; directory: string | null };

@@ -18,6 +18,7 @@ import { requestDirectoryAccess } from '@/lib/desktop';
 import { sessionEvents } from '@/lib/sessionEvents';
 import { CHAT_DRAFT_PROJECT_ID } from '@/lib/chatDirectories';
 import { useSessionFoldersStore } from '@/stores/useSessionFoldersStore';
+import { refreshGlobalSessions } from '@/stores/useGlobalSessionsStore';
 import { useUIStore } from '@/stores/useUIStore';
 import { useChildStoreManager } from '@/sync/sync-context';
 import type { ProjectSortOrder } from '@/stores/useSessionDisplayStore';
@@ -56,10 +57,10 @@ type GroupProps = Pick<SessionGroupSectionProps,
   | 'collapsedGroups' | 'hideDirectoryControls' | 'mobileVariant' | 'alwaysShowActions'
   | 'activeProjectId' | 'notifyOnSubtasks' | 'expandedParents' | 'editTitle'
   | 'editingRowKey'
-  | 'copiedSessionId' | 'folderRename' | 'setFolderRenameDraft' | 'clearFolderRename'
+  | 'folderRename' | 'setFolderRenameDraft' | 'clearFolderRename'
   | 'setEditingId' | 'setEditingRowKey' | 'setEditTitle' | 'toggleParent' | 'allowReselect'
   | 'onSessionSelected' | 'resetSessionSearch' | 'deleteSessionConfirm'
-  | 'setDeleteSessionConfirm' | 'startFolderRename' | 'setCopiedSessionId'
+  | 'setDeleteSessionConfirm' | 'startFolderRename'
   | 'startSessionWorktreeMenuLoad'
 > & { pinnedSessionIds: Set<string>; sessionOrderIndex: Map<string, number> };
 
@@ -189,7 +190,10 @@ function SessionProjectScrollerComponent({ model, view, actions }: Props): React
 
   const renderStatus = React.useCallback((row: Extract<SessionSidebarRow, { kind: 'status' }>) => {
     const retry = () => {
-      if (!row.status.directory) return;
+      if (!row.status.directory) {
+        void refreshGlobalSessions();
+        return;
+      }
       childStores.requestBootstrap({ directory: row.status.directory, priority: 'expanded', reason: row.group.isMain ? 'project-expanded' : 'worktree-expanded', force: true });
     };
     const grant = async () => {
@@ -391,6 +395,19 @@ function SessionProjectScrollerComponent({ model, view, actions }: Props): React
     if (row.kind === 'status') return renderStatus(row);
     if (row.emptyKind === 'sidebar') return model.emptyState;
     if (row.emptyKind === 'search') return model.searchEmptyState;
+    if (row.emptyKind === 'group' && row.group?.directory && !row.group.emptyMessage) {
+      const group = row.group;
+      return <Button variant="link" size="xs" className="w-full justify-start pl-[26px] text-left font-normal normal-case text-muted-foreground/70 underline-offset-auto hover:text-foreground hover:underline" onClick={() => {
+          prepareSessionProjectAction({
+            projectId: row.projectId ?? null,
+            mobileVariant: view.mobileVariant,
+            closeMobileSwitcher: true,
+            setActiveProjectIdOnly: actions.setActiveProjectIdOnly,
+            setSessionSwitcherOpen: actions.setSessionSwitcherOpen,
+          });
+          actions.openNewSessionDraft({ selectedProjectId: row.projectId, directoryOverride: group.directory, target: group.draftTarget });
+        }}>{t('sessions.sidebar.group.empty.startSession')}</Button>;
+    }
     return <div className="py-1 pl-[26px] text-left typography-micro text-muted-foreground">
       {row.emptyKind === 'archived' ? t('sessions.sidebar.group.empty.noArchivedSessions') : row.group?.emptyMessage ?? t('sessions.sidebar.group.empty.noSessionsInWorkspace')}
     </div>;
